@@ -36,3 +36,25 @@ CREATE TABLE stations (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE station_history (
+  id SERIAL PRIMARY KEY,
+  station_id INTEGER REFERENCES stations(id) ON DELETE CASCADE,
+  change_type VARCHAR(50),
+  previous_distributor_id INTEGER REFERENCES distributors(id),
+  new_distributor_id INTEGER REFERENCES distributors(id),
+  previous_dealer_id INTEGER REFERENCES dealers(id),
+  new_dealer_id INTEGER REFERENCES dealers(id),
+  previous_status VARCHAR(100),
+  new_status VARCHAR(100),
+  change_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  note TEXT
+);
+
+
+CREATE TABLE station_count_snapshot (
+  id SERIAL PRIMARY KEY,
+  distributor_id INTEGER REFERENCES distributors(id),
+  station_count INTEGER,
+  snapshot_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

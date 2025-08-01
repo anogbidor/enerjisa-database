@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2020", // modern Node features
+    "module": "ESNext", // use modern JS modules
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "outDir": "./dist", // compiled output
+    "rootDir": "./src" // source code location
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

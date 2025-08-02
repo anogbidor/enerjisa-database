@@ -52,7 +52,7 @@ export const mockStations = [
     contract_end: '2027-01-01',
     is_cancelled: false,
     dealer_license_no: 'BAY/0000-1/22222',
-    distributor_license_no: 'DAĞ/0000-1/11111',
+    distributor_license_no: 'DAĞ/939-0/00000',
   },
   {
     license_no: 'BAY/939-82/37567',

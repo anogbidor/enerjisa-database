@@ -1,4 +1,3 @@
-// src/scripts/seedMockData.ts
 import { pool } from '../db'
 import {
   mockDistributors as distributors,
@@ -72,7 +71,7 @@ async function seed() {
       }
     }
 
-    // Insert Stations
+    // Insert or Update Stations (simulate transfer)
     for (const station of stations) {
       const distributorRes = await client.query(
         `SELECT id FROM distributors WHERE license_no = $1`,
@@ -86,8 +85,50 @@ async function seed() {
       const distributorId = distributorRes.rows[0]?.id || null
       const dealerId = dealerRes.rows[0]?.id || null
 
-      await client.query(
-        `INSERT INTO stations (
+      const existingStationRes = await client.query(
+        `SELECT id, dealer_id, distributor_id FROM stations WHERE license_no = $1`,
+        [station.license_no]
+      )
+
+      if (existingStationRes.rows.length > 0) {
+        const existing = existingStationRes.rows[0]
+
+        const dealerChanged = existing.dealer_id !== dealerId
+        const distributorChanged = existing.distributor_id !== distributorId
+
+        if (dealerChanged || distributorChanged) {
+          // Update station ownership
+          await client.query(
+            `UPDATE stations SET dealer_id = $1, distributor_id = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3`,
+            [dealerId, distributorId, existing.id]
+          )
+
+          // Log to station_history
+          await client.query(
+            `INSERT INTO station_history (
+              station_id,
+              change_type,
+              previous_dealer_id,
+              new_dealer_id,
+              previous_distributor_id,
+              new_distributor_id,
+              note
+            ) VALUES ($1, 'transfer', $2, $3, $4, $5, $6)`,
+            [
+              existing.id,
+              existing.dealer_id,
+              dealerId,
+              existing.distributor_id,
+              distributorId,
+              'Simulated station transfer during seeding',
+            ]
+          )
+
+          console.log(`🔁 Station transferred: ${station.license_no}`)
+        }
+      } else {
+        await client.query(
+          `INSERT INTO stations (
             license_no, name, city, district, address,
             status, license_start, license_end,
             contract_start, contract_end, is_cancelled,
@@ -98,23 +139,24 @@ async function seed() {
             $9, $10, $11,
             $12, $13
           )
-         ON CONFLICT (license_no) DO NOTHING`,
-        [
-          station.license_no,
-          station.name,
-          station.city,
-          station.district,
-          station.address,
-          station.status,
-          station.license_start,
-          station.license_end,
-          station.contract_start,
-          station.contract_end,
-          station.is_cancelled,
-          distributorId,
-          dealerId,
-        ]
-      )
+          ON CONFLICT (license_no) DO NOTHING`,
+          [
+            station.license_no,
+            station.name,
+            station.city,
+            station.district,
+            station.address,
+            station.status,
+            station.license_start,
+            station.license_end,
+            station.contract_start,
+            station.contract_end,
+            station.is_cancelled,
+            distributorId,
+            dealerId,
+          ]
+        )
+      }
     }
 
     await client.query('COMMIT')

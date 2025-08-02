@@ -58,3 +58,12 @@ CREATE TABLE station_count_snapshot (
   station_count INTEGER,
   snapshot_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Dealer History table
+CREATE TABLE dealer_history (
+  id SERIAL PRIMARY KEY,
+  dealer_id INTEGER REFERENCES dealers(id) ON DELETE CASCADE,
+  old_distributor_id INTEGER REFERENCES distributors(id),
+  new_distributor_id INTEGER REFERENCES distributors(id),
+  changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

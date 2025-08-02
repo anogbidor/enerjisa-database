@@ -1,15 +1,27 @@
 {
   "name": "enerji-portal",
   "version": "1.0.0",
-  "description": "",
+  "description": "Backend for Enerji Portal using Node.js, Express, and PostgreSQL",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "type": "commonjs",
+  "scripts": {
+    "dev": "nodemon src/app.ts",
+    "start": "ts-node src/app.ts",
+    "seed:mock": "echo \"📦 Running mock seeder...\" && ts-node src/scripts/seedMockData.ts",
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "test": "echo \"❌ No tests yet\" && exit 1"
+  },
+  "keywords": [
+    "epdk",
+    "postgresql",
+    "express",
+    "node",
+    "soap",
+    "energy"
+  ],
+  "author": "Abrahamic Ogbidor",
+  "license": "MIT",
   "dependencies": {
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
@@ -20,6 +32,7 @@
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/node": "^24.1.0",
+    "@types/pg": "^8.15.5",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
